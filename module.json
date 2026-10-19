@@ -1,0 +1,18 @@
+{
+  "id": "vtm-v20-vaulderie",
+  "title": "VtM V20 Vaulderie & Vinculum",
+  "description": "Run the Vaulderie for any group of Kindred, track every Vinculum rating, apply temporary modifiers, and roll Vinculum conflicts, using the V20 rules.",
+  "version": "0.1.0",
+  "authors": [{ "name": "CD" }],
+  "compatibility": { "minimum": "13", "verified": "14" },
+  "relationships": {
+    "systems": [
+      { "id": "vtm-v20", "type": "system", "compatibility": { "minimum": "1.1.5" } }
+    ]
+  },
+  "esmodules": ["scripts/main.mjs"],
+  "styles": ["styles/vaulderie.css"],
+  "url": "https://github.com/fisherkyng-svg/vtm-v20-vaulderie",
+  "manifest": "",
+  "download": ""
+}
