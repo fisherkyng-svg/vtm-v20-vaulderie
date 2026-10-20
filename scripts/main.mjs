@@ -371,34 +371,60 @@ async function openConflict(actor) {
 }
 
 // ---------------------------------------------------------------------------
-// UI hooks: sheet Status tab section, Actors directory buttons
+// UI hooks: Vinculum tab on the character sheet, Actors directory buttons
+
+const TAB = 'vinculum';
+
+/** Show one tab. Prefer the system's own switcher so its drawers and classes stay in sync. */
+function activateTab(app, root, tabId) {
+  app._tab = tabId;
+  if (typeof app._syncTabs === 'function') return app._syncTabs();
+  root.querySelectorAll('.sheet-tabs .item[data-tab]').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+  root.querySelectorAll('.sheet-body > .tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+}
 
 function onRenderSheet(app, element) {
   const actor = app.document;
   if (game.system.id !== SYSTEM_ID || !isKindred(actor)) return;
   const root = element instanceof HTMLElement ? element : element?.[0];
-  const tab = root?.querySelector('.tab[data-tab="status"]');
-  if (!tab) return;
-  tab.querySelector('.vvd-sheet')?.remove();
+  const nav = root?.querySelector('.sheet-tabs');
+  const body = root?.querySelector('.sheet-body');
+  if (!nav || !body) return;
+  nav.querySelector(`.item[data-tab="${TAB}"]`)?.remove();
+  body.querySelector(`:scope > .tab[data-tab="${TAB}"]`)?.remove();
   const a = worldActor(actor);
   const ids = Object.keys(vinc(a)).filter(id => game.actors.get(id))
     .sort((x, y) => (rating(a, y) ?? 0) - (rating(a, x) ?? 0));
-  if (!ids.length && !game.user.isGM) return;
+  if (!ids.length && !game.user.isGM) {
+    if (app._tab === TAB) activateTab(app, root, 'status');
+    return;
+  }
 
-  const sec = document.createElement('section');
-  sec.className = 'vvd-sheet';
+  // Tab button, placed after the system's own tabs (before the money display)
+  const item = document.createElement('a');
+  item.className = 'item vvd-tab-item';
+  item.dataset.tab = TAB;
+  item.innerHTML = `<i class="fas fa-wine-glass"></i> Vinculum${ids.length ? ` <span class="vvd-count">${ids.length}</span>` : ''}`;
+  item.addEventListener('click', ev => { ev.preventDefault(); activateTab(app, root, TAB); });
+  nav.insertBefore(item, nav.querySelector('.money-section'));
+
+  const sec = document.createElement('div');
+  sec.className = `tab ${TAB} vvd-sheet`;
+  sec.dataset.group = 'primary';
+  sec.dataset.tab = TAB;
   const rows = ids.map(id => {
     const v = rating(a, id), e = effective(a, id);
     const dots = Array.from({ length: 10 }, (_, i) => `<span class="vvd-dot ${i < e ? 'on' : ''}"></span>`).join('');
     return `<li><span class="vvd-name">${esc(nameOf(id))}</span><span class="vvd-dots" title="${e}${e !== v ? ` (base ${v})` : ''}">${dots}</span><span class="vvd-num">${e}${e !== v ? `<sup>${v}</sup>` : ''}</span></li>`;
   }).join('');
-  sec.innerHTML = `<h3><i class="fas fa-wine-glass"></i> Vinculum</h3>
-    ${rows ? `<ul>${rows}</ul>` : '<p class="vvd-sub">No Vinculum yet.</p>'}
-    <p class="vvd-sub">Last Vaulderie: ${fmtDate(a.getFlag(MOD, 'lastVaulderie'))}</p>
+  sec.innerHTML = `<div class="section-block">
+    <h2>Vinculum</h2>
+    ${rows ? `<ul>${rows}</ul>` : '<p class="vvd-sub">No Vinculum yet. The Storyteller runs the Vaulderie from the Actors sidebar.</p>'}
+    <p class="vvd-sub">Last Vaulderie: ${fmtDate(a.getFlag(MOD, 'lastVaulderie'))}. Vinculi do not fade with time.</p>
     <div class="vvd-bar">
       ${a.isOwner && ids.length >= 2 ? '<button type="button" data-vvd="conflict"><i class="fas fa-balance-scale"></i> Conflict roll</button>' : ''}
       ${game.user.isGM ? '<button type="button" data-vvd="matrix"><i class="fas fa-th"></i> Matrix</button>' : ''}
-    </div>`;
+    </div></div>`;
   sec.addEventListener('click', ev => {
     const b = ev.target.closest('button[data-vvd]');
     if (!b) return;
@@ -406,7 +432,11 @@ function onRenderSheet(app, element) {
     if (b.dataset.vvd === 'conflict') openConflict(a);
     if (b.dataset.vvd === 'matrix') openMatrix();
   });
-  tab.append(sec);
+  body.append(sec);
+
+  // The system's switcher only knows about tabs present before this hook ran, so a
+  // re-render while on Vinculum would leave every panel hidden. Restore it here.
+  if (app._tab === TAB) activateTab(app, root, TAB);
 }
 
 function onRenderDirectory(app, element) {

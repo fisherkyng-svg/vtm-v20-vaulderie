@@ -27,7 +27,7 @@ https://github.com/fisherkyng-svg/vtm-v20-vaulderie/releases/latest/download/mod
 - **Vinculum**: the matrix. Rows rate columns. Edit any cell (blank = none), add temporary modifiers (e.g. Dissociate −3 toward everyone), remove modifiers, open History.
 - **History**: every Vaulderie and manual edit, with undo (undo newest first).
 
-**Players:** the character sheet's Status tab shows a read-only Vinculum section with their own ratings, the last Vaulderie date, and a **Conflict roll** button.
+**Players:** a **Vinculum** tab on the character sheet (after Bio) lists their own ratings with dots, the last Vaulderie date, and a **Conflict roll** button. It appears once the character has any Vinculum. The Storyteller always sees it, plus a Matrix button.
 
 ## API
 

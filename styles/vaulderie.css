@@ -30,12 +30,13 @@
 .vvd-new i { color: #c9a227; }
 .vvd-hold i { opacity: 0.5; }
 
-.vvd-sheet { margin-top: 10px; padding-top: 6px; border-top: 1px solid rgba(196,30,58,0.5); }
-.vvd-sheet h3 { margin: 0 0 4px; }
-.vvd-sheet ul { list-style: none; margin: 0; padding: 0; }
-.vvd-sheet li { display: grid; grid-template-columns: 1fr auto 28px; align-items: center; gap: 8px; padding: 2px 0; }
-.vvd-dots { display: inline-flex; gap: 2px; }
-.vvd-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #888; }
+.vvd-tab-item .vvd-count { font-size: 0.75em; opacity: 0.7; margin-left: 2px; }
+.vvd-sheet ul { list-style: none; margin: 0 0 8px; padding: 0; }
+.vvd-sheet li { display: grid; grid-template-columns: minmax(0, 1fr) auto 32px; align-items: center; gap: 10px; padding: 5px 0; font-size: 15px; border-bottom: 1px solid rgba(128,128,128,0.2); }
+.vvd-sheet .vvd-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vvd-sheet .vvd-num { font-weight: bold; }
+.vvd-dots { display: inline-flex; gap: 3px; }
+.vvd-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #888; }
 .vvd-dot.on { background: #c41e3a; border-color: #c41e3a; }
 .vvd-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .vvd-bar button { flex: 1 1 auto; min-height: 32px; }
